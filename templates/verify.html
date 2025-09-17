@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Certificate</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .fade-in { animation: fadeIn 1s ease-in-out; }
+    @keyframes fadeIn { from {opacity:0; transform:translateY(20px);} to {opacity:1; transform:translateY(0);} }
+  </style>
+</head>
+<body class="bg-gradient-to-r from-gray-900 via-gray-800 to-black text-white min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="w-full bg-gray-900 shadow-lg fixed top-0 z-10">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-blue-400">Blockchain Certificates</h1>
+      <ul class="flex space-x-6">
+        <li><a href="/" class="hover:text-blue-400 transition">Home</a></li>
+        <li><a href="/issue" class="hover:text-blue-400 transition">Issue</a></li>
+        <li><a href="/verify" class="text-blue-400 font-semibold">Verify</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Form -->
+  <main class="flex-grow flex items-center justify-center mt-28 fade-in">
+    <div class="bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-lg">
+      <h2 class="text-2xl font-bold mb-6 text-center text-green-400">🔍 Verify a Certificate</h2>
+      <form method="POST" action="/verify" class="space-y-5">
+        <div>
+          <label class="block mb-2 text-gray-300">Certificate ID</label>
+          <input type="text" name="certID" required
+            class="w-full px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+        </div>
+        <button type="submit"
+          class="w-full bg-green-500 py-3 rounded-lg font-semibold hover:bg-green-600 transform hover:scale-105 transition">
+          Verify Certificate
+        </button>
+      </form>
+
+      <!-- Flask message -->
+      {% if message %}
+        <div class="mt-6 p-4 rounded-lg text-center fade-in {% if '❌' in message %}bg-red-600{% else %}bg-green-600{% endif %}">
+          {{ message|replace('\n','<br>')|safe }}
+        </div>
+      {% endif %}
+
+      <!-- Display verification details -->
+      {% if cert %}
+        <div class="mt-4 p-4 rounded-lg bg-yellow-600 fade-in">
+          <p><strong>Student Name:</strong> {{ cert.student }}</p>
+          <p><strong>Course:</strong> {{ cert.course }}</p>
+          <p><strong>Institution:</strong> {{ cert.institution }}</p>
+          <p><strong>Issue Date:</strong> {{ cert.issueDate }}</p>
+          <p><strong>Status:</strong> {% if cert.valid %}Valid{% else %}Revoked{% endif %}</p>
+
+          <!-- Download Button -->
+          {% if cert.valid %}
+            <a href="/download/{{ certID }}" class="mt-4 inline-block bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-600 transition">
+              ⬇️ Download Certificate (PDF)
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-10 py-6 bg-gray-900 text-center text-gray-500">
+    &copy; 2025 Blockchain Certificates | Built with Python, Flask & Ethereum
+  </footer>
+</body>
+</html>
